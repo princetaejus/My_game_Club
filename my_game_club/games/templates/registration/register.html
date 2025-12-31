@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Register — Game Club</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+            font-family: Segoe UI;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .register-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0,255,200,0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            background: #00ffcc;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-text {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+            .login-text a {
+                color: yellowgreen;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+                .login-text a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="register-box">
+        <h2>📝 Game Club Register</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.username }}
+            {{ form.email }}
+            {{ form.first_name }}
+            {{ form.last_name }}
+            {{ form.password1 }}
+            {{ form.password2 }}
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p class="login-text">
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </p>
+    </div>
+
+</body>
+</html>
+
+

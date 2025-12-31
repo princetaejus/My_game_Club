@@ -1,0 +1,362 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Club — AI Scanner</title>
+
+    <!-- AI libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.js"></script>
+    <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+
+    <style>
+        /* ========== GLOBAL ========== */
+        
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+            padding-top: 90px;
+        }
+
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 65px;
+            background: rgba(15, 32, 39, 0.85);
+            backdrop-filter: blur(14px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 35px;
+            box-shadow: 0 10px 30px rgba(0,255,180,0.12);
+            z-index: 1000;
+        }
+
+        /* Left & right containers */
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* Logo */
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #00ffcc;
+            letter-spacing: 0.5px;
+        }
+
+        /* Links */
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: 0.25s;
+        }
+
+            .navbar a:hover {
+                opacity: 1;
+                color: #00ffcc;
+            }
+
+        /* User */
+        .user {
+            font-size: 13px;
+            color: #a0ffe6;
+        }
+
+        /* Logout */
+        .logout-btn {
+            background: linear-gradient(135deg, #ff4d4d, #ff0066);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+            .logout-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 12px rgba(255,80,80,0.6);
+            }
+        
+
+        /* Mobile menu icon */
+        .menu-toggle {
+            display: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: white;
+        }
+        /* ========== PAGE CONTENT ========== */
+        .page-content {
+            min-height: calc(100vh - 90px); /* space for navbar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* MOBILE */
+        
+        @media (max-width: 768px) {
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 65px;
+                left: 0;
+                width: 100%;
+                background: rgba(15, 32, 39, 0.95);
+                flex-direction: column;
+                align-items: center;
+                display: none;
+                padding: 20px 0;
+                box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            }
+
+                .nav-links a {
+                    padding: 12px 0;
+                    font-size: 16px;
+                }
+
+                .nav-links.show {
+                    display: flex;
+                }
+        }
+
+
+
+        /* ========== CARD ========== */
+        .scanner-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 360px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 255, 180, 0.2);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            font-size: 26px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 400;
+            color: #a0ffe6;
+        }
+
+        /* ========== IMAGE ========== */
+        #myImage {
+            width: 260px;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 3px solid rgba(255,255,255,0.2);
+            margin: 15px 0;
+            transition: 0.4s;
+        }
+
+        .img-glow {
+            animation: imgGlow 0.8s;
+        }
+
+        @keyframes imgGlow {
+            50% {
+                box-shadow: 0 0 25px lime;
+            }
+        }
+
+        /* ========== BUTTONS ========== */
+        button {
+            margin-top: 10px;
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            background: linear-gradient(135deg, #00ff99, #00c9ff);
+            color: #003333;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+            button:hover {
+                transform: scale(1.08);
+                box-shadow: 0 0 20px rgba(0,255,200,0.6);
+            }
+
+        input[type="file"] {
+            margin-top: 10px;
+            color: white;
+        }
+
+        /* ========== RESULT ========== */
+        #result {
+            margin-top: 15px;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .glow {
+            color: #00ff99;
+            animation: glow 0.8s;
+        }
+
+        .shake {
+            color: #ff4d4d;
+            animation: shake 0.5s;
+        }
+
+        @keyframes glow {
+            50% {
+                text-shadow: 0 0 20px #00ff99;
+            }
+        }
+
+        @keyframes shake {
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="logo">🎮 Game Club</span>
+
+            <!-- Mobile menu icon -->
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+            <div class="nav-links" id="navLinks">
+                <a href="{% url 'home' %}">Scanner</a>
+                <a href="{% url 'games' %}">Games</a>
+                <a href="{% url 'leaderboard' %}">Leaderboard</a>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+            <span class="user">👤 {{ user.username }}</span>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="logout-btn">Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="login-btn">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+
+
+    <div class="page-content">
+        <div class="scanner-card">
+            <h1>🚀 Game Club</h1>
+            <h2>AI Image Scanner</h2>
+
+            <input type="file" accept="image/*" onchange="loadImage(event)">
+
+            <img id="myImage" src="{% static 'img/game.png' %}">
+
+            <button onclick="scanImage()">Scan Image</button>
+
+            <div id="result">Waiting...</div>
+        </div>
+    </div>
+
+
+    <script>
+        let classifier;
+        let modelReady = false;
+
+        classifier = ml5.imageClassifier("MobileNet", () => {
+            console.log("Model loaded");
+            modelReady = true;
+        });
+
+        function loadImage(event) {
+            const img = document.getElementById("myImage");
+            img.src = URL.createObjectURL(event.target.files[0]);
+            document.getElementById("result").innerText = "Image loaded. Click Scan.";
+        }
+
+        function scanImage() {
+            if (!modelReady) {
+                alert("Model not loaded yet");
+                return;
+            }
+
+            const img = document.getElementById("myImage");
+            document.getElementById("result").innerText = "Scanning...";
+
+            classifier.classify(img, gotResult);
+        }
+
+        function gotResult(error, results) {
+            const resultDiv = document.getElementById("result");
+            const img = document.getElementById("myImage");
+
+            resultDiv.className = "";
+            img.className = "";
+
+            if (error) {
+                console.error(error);
+                resultDiv.innerText = "Error scanning image";
+                resultDiv.classList.add("shake");
+                return;
+            }
+
+            const label = results[0].label;
+            const confidence = (results[0].confidence * 100).toFixed(2);
+
+            resultDiv.innerHTML = `${label} (${confidence}%)`;
+
+            if (confidence > 50) {
+                resultDiv.classList.add("glow");
+                img.classList.add("img-glow");
+            } else {
+                resultDiv.classList.add("shake");
+            }
+        }
+        function toggleMenu() {
+            document.getElementById("navLinks").classList.toggle("show");
+        }
+    </script>
+
+
+</body>
+</html>

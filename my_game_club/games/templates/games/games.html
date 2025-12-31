@@ -1,0 +1,184 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Club — Games</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+            padding-top: 90px;
+            text-align: center;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 65px;
+            background: rgba(15, 32, 39, 0.85);
+            backdrop-filter: blur(14px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 35px;
+            box-shadow: 0 10px 30px rgba(0,255,180,0.12);
+            z-index: 1000;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+            .navbar a:hover {
+                color: #00ffcc;
+                opacity: 1;
+            }
+
+        /* GAME AREA */
+        .game-box {
+            width: 320px;
+            height: 320px;
+            margin: 60px auto;
+            border-radius: 20px;
+            background: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 0 40px rgba(0,255,180,0.3);
+            transition: 0.3s;
+        }
+
+            .game-box.ready {
+                background: green;
+            }
+
+        .result {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #00ffcc;
+        }
+
+        button {
+            padding: 12px 26px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #00ff99, #00c9ff);
+            color: #003333;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span>🎮 Game Club</span>
+            <a href="{% url 'home' %}">Scanner</a>
+            <a href="{% url 'games' %}">Games</a>
+            <a href="{% url 'leaderboard' %}">Leaderboard</a>
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+            👤 {{ user.username }}
+            {% endif %}
+        </div>
+    </nav>
+
+    <h1>⚡ Reaction Time Game</h1>
+    <p>Wait for green, then click FAST!</p>
+
+    <div id="gameBox" class="game-box">WAIT...</div>
+
+    <div class="result" id="result"></div>
+    <button onclick="startGame()">Start Game</button>
+
+    <!-- GAME SCRIPT -->
+    <script>
+        let startTime = null;
+        let waiting = false;
+
+        function startGame() {
+            const box = document.getElementById("gameBox");
+            const result = document.getElementById("result");
+
+            result.innerText = "Wait for green...";
+            box.innerText = "WAIT...";
+            box.style.background = "red";
+            box.classList.remove("ready");
+
+            waiting = true;
+            startTime = null;
+
+            const delay = Math.random() * 3000 + 1000; // 1–4 seconds
+
+            setTimeout(() => {
+                box.style.background = "green";
+                box.innerText = "CLICK!";
+                box.classList.add("ready");
+                startTime = Date.now();
+                waiting = false;
+            }, delay);
+        }
+
+        document.getElementById("gameBox").onclick = function () {
+            const result = document.getElementById("result");
+
+            if (waiting) {
+                result.innerText = "❌ Too soon!";
+                return;
+            }
+
+            if (!startTime) return;
+
+            const reactionTime = Date.now() - startTime;
+
+            result.innerText = `🔥 Your reaction time: ${reactionTime} ms`;
+
+            saveScore(reactionTime);   // ✅ SEND TO DJANGO
+
+            startTime = null;
+        };
+
+        function saveScore(score) {
+            fetch("{% url 'save_score' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    game_name: "Reaction Time",
+                    score: score,
+                    score_type: "LOW"
+                })
+            })
+            .then(res => res.json())
+            .then(data => console.log("Score saved:", data))
+            .catch(err => console.error("Save error:", err));
+        }
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,185 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Club — Leaderboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+            padding-top: 90px;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 65px;
+            background: rgba(15, 32, 39, 0.85);
+            backdrop-filter: blur(14px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 35px;
+            box-shadow: 0 10px 30px rgba(0,255,180,0.12);
+            z-index: 1000;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            color: #00ffcc;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: 0.25s;
+        }
+
+            .navbar a:hover {
+                opacity: 1;
+                color: #00ffcc;
+            }
+
+        .user {
+            font-size: 13px;
+            color: #a0ffe6;
+        }
+
+        /* ========== CONTENT ========== */
+        .page-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .leaderboard-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 520px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 255, 180, 0.2);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        h1 {
+            margin-bottom: 15px;
+            font-size: 26px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid rgba(0,255,204,0.35);
+        }
+
+        th {
+            color: #00ffcc;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 15px;
+        }
+
+        tr:hover {
+            background: rgba(0,255,204,0.08);
+        }
+
+        .rank-1 {
+            color: gold;
+        }
+
+        .rank-2 {
+            color: silver;
+        }
+
+        .rank-3 {
+            color: #cd7f32;
+        }
+
+        .empty {
+            padding: 20px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="logo">🎮 Game Club</span>
+            <a href="{% url 'home' %}">Scanner</a>
+            <a href="{% url 'games' %}">Games</a>
+            <a href="{% url 'leaderboard' %}">Leaderboard</a>
+        </div>
+
+        <div class="nav-right">
+            <span class="user">👤 {{ user.username }}</span>
+        </div>
+    </nav>
+
+    <!-- ========== PAGE CONTENT ========== -->
+    <div class="page-content">
+        <div class="leaderboard-card">
+            <h1>🏆 Leaderboard</h1>
+
+            {% if scores %}
+            <table>
+                <tr>
+                    <th>Rank</th>
+                    <th>User</th>
+                    <th>Score</th>
+                </tr>
+
+                {% for s in scores %}
+                <tr class="
+                {% if forloop.counter == 1 %}rank-1{% endif %}
+                {% if forloop.counter == 2 %}rank-2{% endif %}
+                {% if forloop.counter == 3 %}rank-3{% endif %}
+            ">
+                    <td>#{{ forloop.counter }}</td>
+                    <td>{{ s.user.username }}</td>
+                    <td>{{ s.score }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <div class="empty">No scores yet</div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
+

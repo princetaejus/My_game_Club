@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Login — Game Club</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #141e30, #243b55);
+            font-family: Segoe UI;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .login-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(0,255,200,0.3);
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            background: #00ffcc;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .register-text {
+            margin-top: 18px;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+            .register-text a {
+                color: yellowgreen;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+                .register-text a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>🔐 Game Club Login</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+        <p class="register-text">
+            No account?
+            <a href="{% url 'register' %}">Register</a>
+        </p>
+    </div>
+
+</body>
+</html>
