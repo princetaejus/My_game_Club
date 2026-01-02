@@ -3,6 +3,10 @@ Random website with a simple reaction time game and leaderboard created using dj
 
 ## 🎮 My Game Club
 
+
+https://github.com/user-attachments/assets/5680fda7-6eb7-468e-bd89-4defd6b54a5c
+
+
 My Game Club is a web-based platform built with **Django** that allows users to explore, interact with, and engage in games within a club-style environment.  
 The project is designed to be scalable, user-friendly, and customizable for future game-related features.
 
@@ -26,6 +30,33 @@ The project is designed to be scalable, user-friendly, and customizable for futu
 - **Frontend:** HTML, CSS, JavaScript
 - **Database:** SQLite (default, can be changed)
 - **Authentication:** Django built-in auth system
+
+---
+## 🧪 Project Status
+
+- ✅ User authentication working
+- ✅ Profile auto-creation via signals
+- ✅ Admin dashboard enabled
+- 🤖 AI Image Scanner (in development / integrated)
+- 🚧 Game logic expanding
+- 🚧 UI/UX improvements planned
+- 🏆 Leaderboards
+---
+
+## 🛣️ Future Enhancements
+
+
+- 🎯 Achievements system
+- 🌙 Dark mode
+- 📊 Game analytics
+- 🎮 Multiplayer games
+- 🔔 Notifications
+
+---
+## 👨‍💻 Author
+
+- Prince
+- Built for learning, experimentation, and fun 🚀
 
 ---
 ## ⚙️ Installation & Setup
